@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRadar.Common", "OpenRadar.Common\OpenRadar.Common.csproj", "{E60FFF56-74EB-4204-B5C7-FCD241073BBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRadar.SimClient", "OpenRadar.SimClient\OpenRadar.SimClient.csproj", "{36C2551A-DAD5-4327-AA4C-2E35F9785553}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimConnectUtils", "SimConnectUtils\SimConnectUtils.csproj", "{44BC235B-2696-48BF-AC58-1097397EA5FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Certs", "Certs", "{DAA20F39-D929-48E7-8B88-ED4AA771D782}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{D383C4D9-79F7-478D-86A1-D1765821803B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Radar", "Radar", "{1351862F-919C-4B1C-A290-C98C72DFE0CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRadar.Sector.Combinatorial", "Radar\OpenRadar.Sector.Combinatorial\OpenRadar.Sector.Combinatorial.csproj", "{C7AE4A7A-F847-4001-9B13-8560DB359981}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRadar.RadarClient", "Radar\OpenRadar.RadarClient\OpenRadar.RadarClient.csproj", "{68C200A6-40AD-464B-8935-4A3165C10776}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E60FFF56-74EB-4204-B5C7-FCD241073BBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E60FFF56-74EB-4204-B5C7-FCD241073BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E60FFF56-74EB-4204-B5C7-FCD241073BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E60FFF56-74EB-4204-B5C7-FCD241073BBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36C2551A-DAD5-4327-AA4C-2E35F9785553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36C2551A-DAD5-4327-AA4C-2E35F9785553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36C2551A-DAD5-4327-AA4C-2E35F9785553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36C2551A-DAD5-4327-AA4C-2E35F9785553}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44BC235B-2696-48BF-AC58-1097397EA5FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44BC235B-2696-48BF-AC58-1097397EA5FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44BC235B-2696-48BF-AC58-1097397EA5FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44BC235B-2696-48BF-AC58-1097397EA5FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7AE4A7A-F847-4001-9B13-8560DB359981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7AE4A7A-F847-4001-9B13-8560DB359981}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7AE4A7A-F847-4001-9B13-8560DB359981}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7AE4A7A-F847-4001-9B13-8560DB359981}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68C200A6-40AD-464B-8935-4A3165C10776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68C200A6-40AD-464B-8935-4A3165C10776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68C200A6-40AD-464B-8935-4A3165C10776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68C200A6-40AD-464B-8935-4A3165C10776}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{44BC235B-2696-48BF-AC58-1097397EA5FE} = {D383C4D9-79F7-478D-86A1-D1765821803B}
+		{C7AE4A7A-F847-4001-9B13-8560DB359981} = {1351862F-919C-4B1C-A290-C98C72DFE0CD}
+		{68C200A6-40AD-464B-8935-4A3165C10776} = {1351862F-919C-4B1C-A290-C98C72DFE0CD}
+	EndGlobalSection
+EndGlobal

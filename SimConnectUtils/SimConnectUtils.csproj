@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.FlightSimulator.SimConnect, Version=11.0.62651.3, Culture=neutral, PublicKeyToken=baf445ffb3a06b5c">
+        <HintPath>..\..\..\MSFS SDK\SimConnect SDK\lib\managed\Microsoft.FlightSimulator.SimConnect.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Nito.AsyncEx.Tasks" Version="5.1.0" />
+    </ItemGroup>
+
+</Project>

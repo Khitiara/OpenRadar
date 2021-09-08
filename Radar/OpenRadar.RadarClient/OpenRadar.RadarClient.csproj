@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Dapplo.Microsoft.Extensions.Hosting.Wpf" Version="0.6.3" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-preview.7.21377.19" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-preview.7.21377.19" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0-preview.7.21377.19" />
+      <PackageReference Include="Serilog" Version="2.11.0-dev-01367" />
+      <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1-dev-00876" />
+      <PackageReference Include="System.IO.IsolatedStorage" Version="4.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\OpenRadar.Common\OpenRadar.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ApplicationDefinition Remove="App.xaml" />
+      <Page Include="App.xaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Properties\Resources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Properties\Resources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Resources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\Certs\server.pfx">
+        <Link>server.pfx</Link>
+      </Content>
+    </ItemGroup>
+
+</Project>

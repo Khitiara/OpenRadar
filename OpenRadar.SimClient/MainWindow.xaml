@@ -1,0 +1,75 @@
+﻿<Window x:Class="OpenRadar.SimClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OpenRadar.SimClient" 
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+        SourceInitialized="MainWindow_OnSourceInitialized"
+        ResizeMode="CanMinimize"
+        Closed="MainWindow_OnClosed">
+    <DockPanel LastChildFill="True">
+        <ToolBarTray Background="DarkGray" DockPanel.Dock="Top">
+            <ToolBar Band="1" BandIndex="1">
+                <Button Name="ConnectBtn" Click="ConnectButton_OnClick">Connect</Button>
+            </ToolBar>
+        </ToolBarTray>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Name="StatusBox">Not Connected</TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <GroupBox>
+                <GroupBox.Header>Current Simulator Data</GroupBox.Header>
+                <StackPanel Orientation="Vertical" Name="CurrentDataBox" d:DataContext="{d:DesignInstance Type=local:ClientPlaneObservable}">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Margin" Value="0,0,0,5"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="185">Flight Number</Label>
+                        <TextBox Width="200" Text="{Binding Path=FlightNum, Mode=OneWay}" IsReadOnly="True" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="185">Coordinates</Label>
+                        <TextBox Width="200" IsReadOnly="True" Text="{Binding Path=Coordinates, Mode=OneWay}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="185">Altitude</Label>
+                        <TextBox Width="200" Text="{Binding Altitude, StringFormat=00000.00 ft, Mode=OneWay}" IsReadOnly="True"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="185">Comms</Label>
+                        <TextBox Width="200" >
+                            <TextBox.Text>
+                                <MultiBinding StringFormat="{}COM1 {0:000\.000} MHz, Squawk {1:X4}" Mode="OneWay">
+                                    <Binding Path="ComFreq"/>
+                                    <Binding Path="Squawk"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="185">Ground Speed</Label>
+                        <TextBox Width="200">
+                            <TextBox.Text>
+                                <MultiBinding StringFormat="{}{0:000} degrees by {1:000.00} knots" Mode="OneWay">
+                                    <Binding Path="GroundTrack"/>
+                                    <Binding Path="GroundSpeed"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+
+            </GroupBox>
+        </Grid>
+    </DockPanel>
+</Window>
