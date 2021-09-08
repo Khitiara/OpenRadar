@@ -7,7 +7,6 @@ using FreeRadar.Common;
 using FreeRadar.Common.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenRadar.SimClient;
 using Serilog;
 
 namespace OpenRadar.RadarClient

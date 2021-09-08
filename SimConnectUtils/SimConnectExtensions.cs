@@ -2,10 +2,14 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.FlightSimulator.SimConnect;
 
 namespace SimConnectUtils
 {
+    /// <summary>
+    /// Extensions to the <see cref="SimConnect"/> type.
+    /// </summary>
     public static class SimConnectEx
     {
         private static SIMCONNECT_DATATYPE GetStringDatumType(FieldInfo field) {
@@ -27,6 +31,19 @@ namespace SimConnectUtils
             };
         }
 
+        /// <summary>
+        /// Registers a data definition with the provided <see cref="SimConnect"/> instance, using reflection and
+        /// <see cref="SimConnectDataFieldAttribute"/> to determine data definition structure.
+        /// </summary>
+        /// <param name="self">The simulator connection</param>
+        /// <param name="dwId">The Enum data definition ID which will be used to refer to this definition in future requests</param>
+        /// <param name="setDatumId">If true, then the datum id (field index) will be preserved in the registered definition</param>
+        /// <param name="inferDataType">Whether to infer the data type when <see cref="SimConnectDataFieldAttribute.Datatype"/>
+        /// equals <see cref="Microsoft.FlightSimulator.SimConnect.SIMCONNECT_DATATYPE.INVALID"/></param>
+        /// <typeparam name="T">The type of the managed struct to reflect</typeparam>
+        /// <exception cref="InvalidOperationException">If <see cref="SimConnectDataFieldAttribute.Datatype"/>
+        /// equals <see cref="Microsoft.FlightSimulator.SimConnect.SIMCONNECT_DATATYPE.INVALID"/> and <paramref name="inferDataType"/> is false</exception>
+        /// <exception cref="NotSupportedException">When inferring a <see cref="TypeCode"/> that is not supported by SimConnect interop</exception>
         public static void RegisterReflectedDataType<T>(this SimConnect self, Enum dwId, bool setDatumId = false,
             bool inferDataType = true) {
             Type type = typeof(T);
@@ -66,9 +83,23 @@ namespace SimConnectUtils
             self.RegisterDataDefineStruct<T>(dwId);
         }
 
+        /// <summary>
+        /// The same as <see cref="System.Windows.Interop.HwndSourceHook"/>
+        /// </summary>
         public delegate IntPtr HWndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
-        
-        public static void CreateSimConnect(string name, IntPtr hWnd, uint win32UserEvent, WaitHandle? eventWaitHandle,
+
+        /// <summary>
+        /// Create and open a simulator connection
+        /// </summary>
+        /// <param name="name">The client name</param>
+        /// <param name="hWnd">A pointer to the window that will host this connection</param>
+        /// <param name="win32UserEvent">A win32 event loop user event, used to pump data reception on the win32 event loop</param>
+        /// <param name="eventWaitHandle">A waithandle that will be signalled by the native SimConnect library when data is available to receive</param>
+        /// <param name="configIdx">A configuration file index for SimConnect. Retained for legacy reasons</param>
+        /// <param name="simConnect">The created simulator connection</param>
+        /// <param name="hWndHook">A delegate which may be registered to the win32 event loop to pump message reception by the simulator connection</param>
+        internal static void CreateSimConnect(string name, IntPtr hWnd, uint win32UserEvent,
+            WaitHandle? eventWaitHandle,
             uint configIdx, out SimConnect simConnect, out HWndProc hWndHook) {
             SimConnect connect = simConnect = new SimConnect(name, hWnd, win32UserEvent, eventWaitHandle, configIdx);
             hWndHook = (IntPtr _, int msg, IntPtr _, IntPtr _, ref bool handled) => {
@@ -79,5 +110,11 @@ namespace SimConnectUtils
                 return IntPtr.Zero;
             };
         }
+
+        /// <summary>
+        /// Utility to asynchronously dispose of nullable values
+        /// </summary>
+        public static ValueTask TryDisposeAsync(this IAsyncDisposable? disposable) =>
+            disposable?.DisposeAsync() ?? ValueTask.CompletedTask;
     }
 }

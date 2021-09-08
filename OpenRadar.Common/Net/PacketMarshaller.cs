@@ -12,17 +12,29 @@ using Overby.Extensions.AsyncBinaryReaderWriter;
 
 namespace FreeRadar.Common.Net
 {
+    /// <summary>
+    /// Utility for implementing a packet serialization scheme based on reinterpret-casting
+    /// </summary>
     public static class PacketMarshaller
     {
+        /// <summary>
+        /// Whether the internal lookup of known packet types has been constructed
+        /// </summary>
         public static bool IsTagSetInitialized { get; private set; }
 
+        /// <summary>
+        /// A lookup of packet types by their tag values.
+        /// </summary>
         public static ImmutableDictionary<ushort, Type> TagReverseLookup { get; private set; } =
             ImmutableDictionary<ushort, Type>.Empty;
 
         /// <summary>
-        /// THIS IS REALLY PERFORMANCE-EXPENSIVE ON FIRST RUN
-        /// Method is a no-op if <see cref="TagReverseLookup"/> is nonnull
+        /// Loads <seealso cref="TagReverseLookup"/> by reflecting over every loaded assembly.
         /// </summary>
+        /// <remarks>
+        /// THIS IS REALLY PERFORMANCE-EXPENSIVE ON FIRST RUN
+        /// Method is a no-op if <see cref="IsTagSetInitialized"/> is true
+        /// </remarks>
         public static void LoadSupportedPacketTypes() {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (!IsTagSetInitialized)
@@ -40,13 +52,35 @@ namespace FreeRadar.Common.Net
                 .ToImmutableDictionary();
         }
 
+        /// <summary>
+        /// Wrapper around <see cref="Marshal.PtrToStructure(IntPtr, Type)"/> that loads from a <see cref="ReadOnlySpan{T}"/>
+        /// instead of an IntPtr.
+        /// </summary>
         private static unsafe T PtrToStructure<T>(ReadOnlySpan<byte> span, Type packetType) {
             fixed (void* ptr = span)
                 return (T?)Marshal.PtrToStructure(new IntPtr(ptr), packetType)
                        ?? throw new IOException();
         }
 
-        public static async Task<T> ReadPacketAsync<T>(AsyncBinaryReader reader, CancellationToken cancellationToken = default) {
+        /// <summary>
+        /// Wrapper around <see cref="Unsafe.Write{T}"/> that writes to a pinned array
+        /// </summary>
+        private static unsafe byte[] StructureToBytes<T>(T packet, ushort size)
+            where T : notnull {
+            byte[] span = new byte[size];
+            fixed (void* ptr = span) Unsafe.Write(ptr, packet);
+            return span;
+        }
+
+        /// <summary>
+        /// Asynchronously reads a single packet from the given <see cref="AsyncBinaryReader"/>
+        /// Consumes four bytes plus the marshalled size of the detected packet type.
+        /// </summary>
+        /// <param name="reader">The reader to read a packet from</param>
+        /// <param name="cancellationToken">Cancels this asynchronous operation</param>
+        /// <returns>The decoded packet</returns>
+        public static async Task<T> ReadPacketAsync<T>(AsyncBinaryReader reader,
+            CancellationToken cancellationToken = default) {
             ushort tag = await reader.ReadUInt16Async(cancellationToken);
             ushort size = await reader.ReadUInt16Async(cancellationToken);
             if (!TagReverseLookup.TryGetValue(tag, out Type? packetType))
@@ -55,7 +89,15 @@ namespace FreeRadar.Common.Net
             return PtrToStructure<T>(span, packetType);
         }
 
-        public static async Task WritePacketAsync<T>(AsyncBinaryWriter writer, T packet, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Asynchronously writes a single packet to the given <see cref="AsyncBinaryWriter"/>
+        /// </summary>
+        /// <param name="writer">The writer to output to</param>
+        /// <param name="packet">The packet to write</param>
+        /// <param name="cancellationToken">Cancels this asynchronous operation</param>
+        /// <exception cref="InvalidOperationException">If the packet type given is not a valid packet type, i.e. lacks a <see cref="PacketAttribute"/></exception>
+        public static async Task WritePacketAsync<T>(AsyncBinaryWriter writer, T packet,
+            CancellationToken cancellationToken = default)
             where T : notnull {
             ushort size = (ushort)Unsafe.SizeOf<T>();
             Type type = packet.GetType();
@@ -65,13 +107,6 @@ namespace FreeRadar.Common.Net
             await writer.WriteAsync(size, cancellationToken);
             byte[] span = StructureToBytes(packet, size);
             await writer.WriteAsync(span, cancellationToken);
-        }
-
-        private static unsafe byte[] StructureToBytes<T>(T packet, ushort size)
-            where T : notnull {
-            byte[] span = new byte[size];
-            fixed (void* ptr = span) Unsafe.Write(ptr, packet);
-            return span;
         }
     }
 }

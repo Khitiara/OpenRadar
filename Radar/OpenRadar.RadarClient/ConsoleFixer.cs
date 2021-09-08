@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace OpenRadar.SimClient
+namespace OpenRadar.RadarClient
 {
     public static class ConsoleFixer
     {

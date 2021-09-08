@@ -6,6 +6,9 @@ using OpenRadar.Common.Properties;
 
 namespace FreeRadar.Common
 {
+    /// <summary>
+    /// Utility functions to assist the use of TLS in network communication
+    /// </summary>
     public static class Crypt
     {
         private static X509Certificate2? _rootCert;

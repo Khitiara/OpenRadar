@@ -3,6 +3,9 @@ using Microsoft.FlightSimulator.SimConnect;
 
 namespace SimConnectUtils
 {
+    /// <summary>
+    /// An asynchronous exception detected when processing a SimConnect api call
+    /// </summary>
     public class SimConnectException : Exception
     {
         public readonly SIMCONNECT_EXCEPTION Error;

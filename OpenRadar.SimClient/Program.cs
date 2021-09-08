@@ -14,7 +14,7 @@ namespace OpenRadar.SimClient
     public static class Program
     {
         [STAThread]
-        public static async Task Main() {
+        public static async Task<int> Main() {
             ConsoleFixer.Run();
             PacketMarshaller.LoadSupportedPacketTypes();
             Log.Logger = new LoggerConfiguration()
@@ -22,7 +22,7 @@ namespace OpenRadar.SimClient
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .CreateLogger();
-            try { 
+            try {
                 await new HostBuilder()
                     .UseSerilog(Log.Logger, true)
                     .ConfigureServices(ConfigureServices)
@@ -31,7 +31,13 @@ namespace OpenRadar.SimClient
                             .UseWindow<MainWindow>())
                     .UseWpfLifetime(ShutdownMode.OnMainWindowClose)
                     .UseConsoleLifetime()
-                    .Build().RunAsync();}
+                    .Build().RunAsync();
+                return 0;
+            }
+            catch (Exception exception) {
+                Log.Fatal(exception, "Unhandled exception in host processing");
+                return exception.HResult;
+            }
             finally {
                 Crypt.DisposeRootCert();
             }

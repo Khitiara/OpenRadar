@@ -1,11 +1,14 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using FreeRadar.Common;
 using JetBrains.Annotations;
 
 namespace OpenRadar.SimClient
 {
+    /// <summary>
+    /// An observable managed version of <see cref="ClientPlaneData"/>,
+    /// for use in data binding. Represents data on a single simulated aircraft.
+    /// </summary>
     public sealed class ClientPlaneObservable : INotifyPropertyChanged
     {
         private string _flightNum = string.Empty;
@@ -17,6 +20,9 @@ namespace OpenRadar.SimClient
         private double _groundTrack;
         private double _groundSpeed;
 
+        /// <summary>
+        /// The ATC flight number of the aircraft
+        /// </summary>
         public string FlightNum {
             get => _flightNum;
             set {
@@ -26,6 +32,9 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The latitude of the aircraft in decimal degrees. The setter for this properties also invokes <seealso cref="PropertyChanged"/> for the Coordinates computed property.
+        /// </summary>
         public double Latitude {
             get => _latitude;
             set {
@@ -36,6 +45,9 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The longitude of the aircraft in decimal degrees. The setter for this properties also invokes <seealso cref="PropertyChanged"/> for the Coordinates computed property.
+        /// </summary>
         public double Longitude {
             get => _longitude;
             set {
@@ -46,6 +58,9 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The true altitude of the aircraft, in US customary feet.
+        /// </summary>
         public double Altitude {
             get => _altitude;
             set {
@@ -55,6 +70,9 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The primary radio communications frequency of the aircraft, in KHz instead of the usual MHz to avoid floating point representation inaccuracy
+        /// </summary>
         public int ComFreq {
             get => _comFreq;
             set {
@@ -64,6 +82,12 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The transponder squawk code of the aircraft, a four digit binary-coded octal number.
+        /// Each octal digit of the squawk is stored in the lower nibble of the corresponding (little-endian) byte,
+        /// so for an aircraft squawking 1234, <c>Squawk == 0x1234</c>. Format specifier <c>X4</c> results in correct
+        /// display of this encoding with no conversion needed. 
+        /// </summary>
         public int Squawk {
             get => _squawk;
             set {
@@ -73,6 +97,9 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The current track of the aircraft over the ground, in true angular degrees. Compensation for magnetic variation is necessary to obtain magnetic ground track.
+        /// </summary>
         public double GroundTrack {
             get => _groundTrack;
             set {
@@ -82,6 +109,9 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The current speed of the aircraft over the ground, in knots (nautical miles per hour)
+        /// </summary>
         public double GroundSpeed {
             get => _groundSpeed;
             set {
@@ -91,6 +121,10 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// Allows setting all properties of this object from an unmanaged <seealso cref="ClientPlaneData"/> struct
+        /// returned by the SimConnect library
+        /// </summary>
         public ClientPlaneData PlaneData {
             set {
                 FlightNum = value.FlightNum;
@@ -105,8 +139,13 @@ namespace OpenRadar.SimClient
             }
         }
 
+        /// <summary>
+        /// The current coordinates of the aircraft on the earth's surface, as a managed latitude-longitude pair.
+        /// see <see cref="Latitude"/>, <see cref="Longitude"/>.
+        /// </summary>
         public LatLng Coordinates => new(Latitude, Longitude);
 
+        /// <inheritdoc />
         public event PropertyChangedEventHandler? PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

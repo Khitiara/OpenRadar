@@ -15,29 +15,28 @@ namespace OpenRadar.SimClient
         private const uint WmUserSimConnect = 0x0402;
 
         public ClientPlaneObservable Plane { get; }
-        private          HWndHookRegistration?                     _registration;
-        private          AsyncSimConnect<RequestId, DefinitionId>? _simConnection;
+        private SimConnectWrapper<RequestId, DefinitionId>? _simConnection;
 
         public event Action? OnDisconnected;
 
         public async Task OpenSim(string name) {
-            (_simConnection, Task<SIMCONNECT_RECV_OPEN> openTask) = AsyncSimConnect<RequestId, DefinitionId>.Open(name,
-                _hwnd?.Handle ?? IntPtr.Zero, WmUserSimConnect, null, SimConnect.SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
+            _simConnection = await SimConnectWrapper<RequestId, DefinitionId>.OpenAsync(name,
+                _hwnd?.Handle ?? IntPtr.Zero, WmUserSimConnect, null,
+                proc => _hwnd?.Register(new HwndSourceHook(proc))!);
             _simConnection.Quit += (_, _) => {
                 Task unused = DisconnectSimAsync();
             };
             _simConnection.Requests[RequestId.UserDataUpdate].SimObjectData += OnClientPlaneData;
-            _registration = Window!.RegisterHWndHook(new HwndSourceHook(_simConnection.HWndProc));
-            SIMCONNECT_RECV_OPEN open = await openTask;
+            SIMCONNECT_RECV_OPEN open = _simConnection.Open;
             Log.Information("SimConnect Opened (Size: {Size}, Version: {Version}, Id: {Id})", open.dwSize,
                 open.dwVersion,
                 open.dwID);
 
-            _simConnection!.RegisterReflectedDataType<ClientPlaneData>(DefinitionId.ClientPlaneData);
+            _simConnection.RegisterReflectedDataType<ClientPlaneData>(DefinitionId.ClientPlaneData);
 
             _clientCert = new X509Certificate2(Resources.ClientCert, "freeradar");
 
-            _simConnection!.RequestDataOnSimObject(RequestId.UserDataUpdate, DefinitionId.ClientPlaneData,
+            _simConnection.RequestDataOnSimObject(RequestId.UserDataUpdate, DefinitionId.ClientPlaneData,
                 SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SECOND, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0,
                 1, 0);
             _logger.LogDebug("Position updates started");
@@ -61,7 +60,6 @@ namespace OpenRadar.SimClient
 
         public async Task DisconnectSimAsync() {
             await StopPositionUpdatesAsync();
-            _registration?.Dispose();
             _simConnection?.Dispose();
             _simConnection = null;
             OnOnDisconnected();

@@ -3,6 +3,9 @@ using SimConnectUtils;
 
 namespace OpenRadar.SimClient
 {
+    /// <summary>
+    /// Measured aircraft data as a marshallable structure which may be returned by SimConnect api calls.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public readonly struct ClientPlaneData
     {

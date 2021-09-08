@@ -2,6 +2,9 @@
 
 namespace FreeRadar.Common.Net.Packets
 {
+    /// <summary>
+    /// A position update packet, sent from the sim client to the radar client to indicate changes to the position of the simulated aircraft
+    /// </summary>
     [Packet(PacketTag.PositionUpdate)]
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public readonly struct PositionUpdate : ISimToRadarPacket

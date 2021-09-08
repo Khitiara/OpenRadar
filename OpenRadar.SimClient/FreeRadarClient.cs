@@ -30,7 +30,6 @@ namespace OpenRadar.SimClient
 
         public void Dispose() {
             _clientCert?.Dispose();
-            _registration?.Dispose();
             _simConnection?.Dispose();
         }
 
